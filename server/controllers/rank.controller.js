@@ -108,7 +108,18 @@ export const deleteKeyword = async(req, res)=>{
   }
 }
 
-// Toggle auto-refresh for a keyword
+// Toggle tracking active/inactive
 export const toggleAutoRefresh = async(req, res)=>{
-
+  try {
+    const tracking = await KeywordTracking.findOne({_id: req.params.id, userId: req.userId})
+    if(!tracking){
+      return res.status(404).json({success: false, message: "Keyword not found"})
+    }
+    tracking.active = !tracking.active
+    await tracking.save()
+    return res.status(200).json({success: true,  tracking})
+  } catch (error) {
+    console.log("Error in toggleAutoRefresh controller:", error.message)
+    res.status(500).json({success: false, message: "Internal server error"})
+  }
 }
