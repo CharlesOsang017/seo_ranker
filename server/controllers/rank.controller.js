@@ -78,7 +78,20 @@ export const getKeyword = async(req, res)=>{
 
 // Manualy refresh a keyword ranking
 export const refreshKeyword = async(req, res)=>{
+    try {
+        const tracking = await KeywordTracking.findOne({_id: req.params.id, userId: req.userId})
+        if(!tracking){
+            return res.status(404).json({success: false, message: "Keyword not found"})
+        }
+        tracking.status = "checking"
+        await tracking.save()
+        res.status(200).json({success: true, message: "Rank checking started"})
+        keywordTracking(tracking)
 
+    } catch (error) {
+        console.log("Error in refreshKeyword controller:", error.message)
+        res.status(500).json({success: false, message: "Internal server error"})
+    }
 }
 
 // Delete a tracked keyword
