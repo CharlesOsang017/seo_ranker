@@ -67,7 +67,7 @@ export const getKeyword = async(req, res)=>{
         if(!tracking){
             return res.status(404).json({success: false, message: "Keyword not found"})
         }
-        return res.status(200).json({success: true, keyword})
+        return res.status(200).json({success: true, tracking})
 
 
     } catch (error) {
@@ -117,7 +117,7 @@ export const toggleAutoRefresh = async(req, res)=>{
     }
     tracking.active = !tracking.active
     await tracking.save()
-    return res.status(200).json({success: true,  tracking})
+    return res.status(200).json({success: true, tracking})
   } catch (error) {
     console.log("Error in toggleAutoRefresh controller:", error.message)
     res.status(500).json({success: false, message: "Internal server error"})

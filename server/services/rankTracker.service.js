@@ -1,7 +1,9 @@
 import Browserbase from "@browserbasehq/sdk";
+import { chromium } from "playwright-core";
 
 const bb = new Browserbase({
   apiKey: process.env.BROWSERBASE_API_KEY,
+  projectId: process.env.BROWSERBASE_PROJECT_ID,
 });
 
 // Search Google for a keyword and extract ranking results for a target domain
@@ -9,10 +11,11 @@ const bb = new Browserbase({
 export const rankTracker = async(keyword, targetDomain) =>{
     let browser;
     try {
-        // 1. Initialize Brwoserbase session & connect Playwright
-        const session = await bb.session.create({browserSettings: {blockAds: true}})
+        // 1. Initialize Browserbase session & connect Playwright
+        const session = await bb.sessions.create({browserSettings: {blockAds: true}})
         browser = await chromium.connectOverCDP(session.connectUrl)
-        const page = browser.contexts()[0].pages()[0]
+        const context = browser.contexts()[0];
+        const page = context.pages()[0] || await context.newPage();
         page.setDefaultNavigationTimeout(45000)
 
         // 2. Initial Google visit & consent handling
@@ -56,13 +59,14 @@ export const rankTracker = async(keyword, targetDomain) =>{
                     }
                     if(!a || !a.href.startsWith("http") || a.href.includes('google.')) return null;
                     let s = ""
-                    c = a.parentElement;  
-                    for(let j=0; j<6 && j++; c = c.parentElement){
+                    let c = a.parentElement;  
+                    for(let j=0; j<6 && c; j++){
                         const txt = c.innerText || ""
                         if(txt.length > h3.innerText.length + 50){
                             s = (txt.split("\n").find((l)=>l.length > 30 && !l.includes(h3.innerText.substring(0, 20))) || "").trim().substring(0, 300);
                             if(s) break
                         }
+                        c = c.parentElement;
                     }
                     return {url: a.href, domain: new URL(a.href).hostname.replace("www.", ""), title: h3.innerText.trim(), snippet: s}                
                 }).filter(Boolean))
