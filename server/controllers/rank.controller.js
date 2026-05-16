@@ -1,3 +1,4 @@
+import KeywordTracking from "../models/rankTracking.model.js";
 import { keywordTracking } from "../services/keywordTracking.service.js";
 
 // Add a keyword to track
@@ -48,7 +49,15 @@ export const addKeyword = async(req, res)=>{
 }
 // Get all tracked keywords for user
 export const getKeywords = async(req, res)=>{
-
+ try {
+    const keywords = await KeywordTracking.find({userId: req.userId}).sort({createdAt: -1}).select("-rankHistory")
+    
+    return res.status(200).json({success: true, keywords})
+    
+ } catch (error) {
+    console.log("Error in getKeywords controller:", error.message)
+    res.status(500).json({success: false, message: "Internal server error"})
+ }
 }
 
 // Get single keyword with full history and competitors
