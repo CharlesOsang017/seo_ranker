@@ -96,7 +96,16 @@ export const refreshKeyword = async(req, res)=>{
 
 // Delete a tracked keyword
 export const deleteKeyword = async(req, res)=>{
-
+  try {
+    const tracking = await KeywordTracking.findByIdAndDelete({_id: req.params.id, userId: req.userId})
+    if(!tracking){
+      return res.status(404).json({success: false, message: "Keyword not found"})
+    }
+    return res.status(200).json({success: true, message: "Keyword deleted successfully!"})
+  } catch (error) {
+    console.log("Error in deleteKeyword controller:", error.message)
+    res.status(500).json({success: false, message: "Internal server error"})
+  }
 }
 
 // Toggle auto-refresh for a keyword
