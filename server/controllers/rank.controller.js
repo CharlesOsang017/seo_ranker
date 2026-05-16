@@ -51,7 +51,7 @@ export const addKeyword = async(req, res)=>{
 export const getKeywords = async(req, res)=>{
  try {
     const keywords = await KeywordTracking.find({userId: req.userId}).sort({createdAt: -1}).select("-rankHistory")
-    
+
     return res.status(200).json({success: true, keywords})
     
  } catch (error) {
@@ -62,7 +62,18 @@ export const getKeywords = async(req, res)=>{
 
 // Get single keyword with full history and competitors
 export const getKeyword = async(req, res)=>{
-    
+    try {        
+        const tracking = await KeywordTracking.findOne({_id: req.params.id, userId: req.userId})
+        if(!tracking){
+            return res.status(404).json({success: false, message: "Keyword not found"})
+        }
+        return res.status(200).json({success: true, keyword})
+
+
+    } catch (error) {
+        console.log("Error in getKeyword controller:", error.message)
+        res.status(500).json({success: false, message: "Internal server error"})
+    }
 }
 
 // Manualy refresh a keyword ranking
