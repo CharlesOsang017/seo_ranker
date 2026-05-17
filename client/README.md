@@ -27,17 +27,17 @@
 ### Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/GreatStackDev/seo-rank-tracker.git
-    ```
+   ```bash
+   git clone https://github.com/charlesosang017/seo-rank-tracker.git
+   ```
 2. Navigate to the project directory:
-    ```bash
-    cd seo-rank-tracker
-    ```
+   ```bash
+   cd seo-rank-tracker
+   ```
 3. Install dependencies:
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 ### Running the Development Server
 
