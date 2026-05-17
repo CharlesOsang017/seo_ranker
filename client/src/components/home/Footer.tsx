@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChartNoAxesColumnIcon } from "lucide-react";
 import { homefooterLinks } from "../../assets/assets";
-import { SiX, SiLinkerd, SiGithub } from "@icons-pack/react-simple-icons";
+import { SiX, SiGithub } from "@icons-pack/react-simple-icons";
 import { FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
