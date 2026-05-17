@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
         res.status(201).json({success: true, token, user});
     } catch (error) {
         console.error("Error registering user:", error);
-        res.status(500).json({success: false, message: "Internal server error"});
+        res.status(500).json({success: false, message: error.message});
     }
 }
 
@@ -52,7 +52,7 @@ export const loginUser = async (req, res) => {
         res.status(200).json({success: true, token, user});
     } catch (error) {
         console.error("Error logging in user:", error);
-        res.status(500).json({success: false, message: "Internal server error"});
+        res.status(500).json({success: false, message: error.message});
     }
 }
 
@@ -66,6 +66,6 @@ export const getCurrentUser = async (req, res) => {
         res.status(200).json({success: true, user});
     } catch (error) {
         console.error("Error getting current user:", error);
-        res.status(500).json({success: false, message: "Internal server error"});
+        res.status(500).json({success: false, message: error.message});
     }
 }
