@@ -8,7 +8,8 @@ interface ScoreGaugeProps {
 export default function ScoreGauge({ score, size = 140, strokeWidth = 10, label }: ScoreGaugeProps) {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
-    const progress = (score / 100) * circumference;
+    const safeScore = score || 0;
+    const progress = (safeScore / 100) * circumference;
     const offset = circumference - progress;
 
     const getColor = (s: number) => {
@@ -17,7 +18,7 @@ export default function ScoreGauge({ score, size = 140, strokeWidth = 10, label 
         return "#ef4444";
     };
 
-    const color = getColor(score);
+    const color = getColor(safeScore);
 
     return (
         <div className="flex flex-col items-center gap-2">
@@ -44,7 +45,7 @@ export default function ScoreGauge({ score, size = 140, strokeWidth = 10, label 
                 {/* Score text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="font-medium" style={{ fontSize: size * 0.28, color }}>
-                        {score}
+                        {safeScore}
                     </span>
                 </div>
             </div>

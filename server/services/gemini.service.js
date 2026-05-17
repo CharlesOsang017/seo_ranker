@@ -1,6 +1,6 @@
-import { GoogleGenAi, Type } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAi({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const seoAnalysisSchema = {
   type: Type.OBJECT,
   properties: {

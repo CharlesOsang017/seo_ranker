@@ -25,7 +25,7 @@ const analysisSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    overalScore: {
+    overallScore: {
       type: Number,
       min: 0,
       max: 100,
@@ -37,7 +37,7 @@ const analysisSchema = new mongoose.Schema(
       accessibility: { type: Number, default: 0 },
       bestPractices: { type: Number, default: 0 },
     },
-    metadata: {
+    metaData: {
       title: { type: String, default: "" },
       description: { type: String, default: "" },
       canonical: { type: String, default: "" },

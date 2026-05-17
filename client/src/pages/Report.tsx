@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import ScoreGauge from "../components/ScoreGauge";
 import IssueCard from "../components/IssueCard";
 import { ArrowLeft, Globe, Clock, FileText, Image, Link2, Heading, Tag, AlertCircle, ExternalLink, Type, Search } from "lucide-react";
-import { dummyWebsiteAnalysis } from "../assets/assets";
+import { useApp } from "../context/AppContext";
 
 interface AnalysisData {
     _id: string;
@@ -59,14 +59,30 @@ export default function Report() {
     const { id } = useParams();
     const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error] = useState("");
+    const [error, setError] = useState("");
     const [activeTab, setActiveTab] = useState("overview");
+    
+    const {api} = useApp();
+
 
     const fetchAnalysis = async () => {
-        setTimeout(() => {
-            setAnalysis(dummyWebsiteAnalysis);
-            setLoading(false);
-        }, 1500);
+        try {
+            const res = await api.get(`/api/analysis/${id}`);
+            if(res.data.success){
+                if(res.data.analysis.status === "processing"){
+                    // Poll for completion
+                    setTimeout(fetchAnalysis, 2000)
+                    return;
+                }
+                setAnalysis(res.data.analysis);
+            }else{
+                setError("Analysis not found");
+            }
+        } catch {
+            setError("Failed to load analysis")
+            
+        }
+        setLoading(false)
     };
 
     const getScoreClass = (s: number) => {
@@ -326,7 +342,7 @@ export default function Report() {
                                         );
                                     })}
                                 </div>
-                                {analysis.headings.h1Texts.length > 0 && (
+                                {analysis.headings?.h1Texts?.length > 0 && (
                                     <div className="mt-4 p-3 rounded-xl bg-white/3 border border-white/5">
                                         <p className="text-xs text-gray-500 mb-1">H1 Text:</p>
                                         {analysis.headings.h1Texts.map((text, i) => (
@@ -373,18 +389,18 @@ export default function Report() {
                             </h3>
                             <div className="space-y-4">
                                 {[
-                                    { label: "Title", value: analysis.metaData.title, ideal: "50-60 characters", len: analysis.metaData.title.length },
-                                    { label: "Description", value: analysis.metaData.description, ideal: "150-160 characters", len: analysis.metaData.description.length },
-                                    { label: "Canonical URL", value: analysis.metaData.canonical },
-                                    { label: "Robots", value: analysis.metaData.robots },
-                                    { label: "Viewport", value: analysis.metaData.viewport },
-                                    { label: "Charset", value: analysis.metaData.charset },
-                                    { label: "OG Title", value: analysis.metaData.ogTitle },
-                                    { label: "OG Description", value: analysis.metaData.ogDescription },
-                                    { label: "OG Image", value: analysis.metaData.ogImage },
-                                    { label: "Twitter Card", value: analysis.metaData.twitterCard },
+                                    { label: "Title", value: analysis?.metaData?.title, ideal: "50-60 characters", len: analysis?.metaData?.title?.length },
+                                    { label: "Description", value: analysis?.metaData?.description, ideal: "150-160 characters", len: analysis?.metaData?.description?.length },
+                                    { label: "Canonical URL", value: analysis?.metaData?.canonical },
+                                    { label: "Robots", value: analysis?.metaData?.robots },
+                                    { label: "Viewport", value: analysis?.metaData?.viewport },
+                                    { label: "Charset", value: analysis?.metaData?.charset },
+                                    { label: "OG Title", value: analysis?.metaData?.ogTitle },
+                                    { label: "OG Description", value: analysis?.metaData?.ogDescription },
+                                    { label: "OG Image", value: analysis?.metaData?.ogImage },
+                                    { label: "Twitter Card", value: analysis?.metaData?.twitterCard },
                                 ].map((meta) => (
-                                    <div key={meta.label} className="bg-muted/50 border border-border rounded-xl p-4">
+                                    <div key={meta.label} className="bg-muted/50 border border-border rounded-xl p-4">  
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-sm font-medium text-foreground">{meta.label}</span>
                                             <div className="flex items-center gap-2">

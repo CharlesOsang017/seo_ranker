@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import rankRoutes from './routes/rank.route.js';
 import analysisRoutes from './routes/analysis.route.js';
 import { auth } from './middlewares/auth.middleware.js';
+import { startRankTrackingCron } from './cron/startRankTracking.cron.js';
 
 const app = express();
 
@@ -17,6 +18,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/rank", auth, rankRoutes);
 app.use("/api/analysis", auth, analysisRoutes);
+
+
+// start cron jobs
+startRankTrackingCron()
 
 const PORT = process.env.PORT || 5000;
 

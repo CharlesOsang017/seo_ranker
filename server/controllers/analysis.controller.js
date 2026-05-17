@@ -1,5 +1,6 @@
 import Analysis from "../models/analysis.model.js";
 import { scrapeUrl } from "../services/scraper.service.js";
+import { analyzeSeoData } from "../services/gemini.service.js";
 
 // Analyze  a URL
 export const analyzeUrl = async (req, res)=>{
@@ -43,9 +44,9 @@ export const analyzeUrl = async (req, res)=>{
             }
 
             // 3. Save results
-            analysis.overalScore = aiResult.data.overalScore || 0;
+            analysis.overallScore = aiResult.data.overallScore || 0;
             analysis.categories = aiResult.data.categories || {};
-            analysis.metadata = scrapeResult.data.metaData || {};
+            analysis.metaData = scrapeResult.data.metaData || {};
             analysis.headings = scrapeResult.data.headings || {};
             analysis.links = scrapeResult.data.links || {};
             analysis.images = scrapeResult.data.images || {};
@@ -79,11 +80,16 @@ export const analyzeUrl = async (req, res)=>{
 // Get analysis by ID
 export const getAnalysisById = async (req, res)=>{
     try {
-        const analysis = await Analysis.findOne({_id: req.params.id, userId: req.userId});
-        if(!analysis){
+        const doc = await Analysis.findOne({_id: req.params.id, userId: req.userId}).lean();
+        if(!doc){
             return res.status(404).json({success: false, message: "Analysis not found"});
         }
-        res.json({success: true, analysis})
+        
+        // Handle legacy schema fields
+        doc.overallScore = doc.overallScore ?? doc.overalScore ?? 0;
+        doc.metaData = doc.metaData ?? doc.metadata ?? {};
+
+        res.json({success: true, analysis: doc})
     } catch (error) {
         console.error("Error fetching analysis by ID:",error.message)
        return res.status(500).json({success: false, message: "server error"})
@@ -97,7 +103,14 @@ export const getAllAnalysisForUser = async (req, res)=>{
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      const analyses = (await Analysis.find({userId: req.userId})).toSorted({createdAt: -1}).skip(skip).limit(limit).select("-issues -keywords");
+      const docs = await Analysis.find({userId: req.userId}).sort({createdAt: -1}).skip(skip).limit(limit).select("-issues -keywords").lean();
+      
+      const analyses = docs.map(doc => ({
+          ...doc,
+          overallScore: doc.overallScore ?? doc.overalScore ?? 0,
+          metaData: doc.metaData ?? doc.metadata ?? {}
+      }));
+
       const total = await Analysis.countDocuments({userId: req.userId})
       res.json({success: true, analyses, pagination: {page, limit, total, pages: Math.ceil(total / limit)}})
     } catch (error) {
