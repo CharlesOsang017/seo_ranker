@@ -92,7 +92,18 @@ export const getAnalysisById = async (req, res)=>{
 
 // Get all analysis for a user
 export const getAllAnalysisForUser = async (req, res)=>{
-    
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const analyses = (await Analysis.find({userId: req.userId})).toSorted({createdAt: -1}).skip(skip).limit(limit).select("-issues -keywords");
+      const total = await Analysis.countDocuments({userId: req.userId})
+      res.json({success: true, analyses, pagination: {page, limit, total, pages: Math.ceil(total / limit)}})
+    } catch (error) {
+        console.error("Error fetching analysis for user:",error.message)
+       return res.status(500).json({success: false, message: "server error"})
+    }
 }
 
 // Delete analysis
