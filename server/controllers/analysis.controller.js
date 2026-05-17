@@ -108,5 +108,15 @@ export const getAllAnalysisForUser = async (req, res)=>{
 
 // Delete analysis
 export const deleteAnalysis = async (req, res)=>{
-    
+    try {
+        const analysis = await Analysis.findOne({_id: req.params.id, userId: req.userId});
+        if(!analysis){
+            return res.status(404).json({success: false, message: "Analysis not found"});
+        }
+        await analysis.deleteOne();
+        res.json({success: true, message: "Analysis deleted"})
+    } catch (error) {
+        console.error("Error deleting analysis:",error.message)
+       return res.status(500).json({success: false, message: "server error"})
+    }
 }
