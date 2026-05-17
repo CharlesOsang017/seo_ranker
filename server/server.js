@@ -20,8 +20,10 @@ app.use("/api/rank", auth, rankRoutes);
 app.use("/api/analysis", auth, analysisRoutes);
 
 
-// start cron jobs
-startRankTrackingCron()
+// start cron jobs ONLY if not in serverless environment
+if (!process.env.VERCEL) {
+    startRankTrackingCron()
+}
 
 const PORT = process.env.PORT || 5000;
 
@@ -29,8 +31,13 @@ app.get("/", (req, res) => {
     res.send("<h3>Welcome to SEO Ranker API!</h3>");
 });
 
+// Initialize database connection
+await connectDB();
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    connectDB();
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+export default app;
