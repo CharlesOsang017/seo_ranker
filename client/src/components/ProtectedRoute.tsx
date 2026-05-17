@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useApp } from "../context/AppContext";
-import { Loader2 } from "lucide-react";
+
 
 export default function ProtectedRoute() {
     const { token, loading } = useApp();
