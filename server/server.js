@@ -4,7 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.route.js';
 import rankRoutes from './routes/rank.route.js';
-
+import analysisRoutes from './routes/analysis.route.js';
+import { auth } from './middlewares/auth.middleware.js';
 
 const app = express();
 
@@ -14,7 +15,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/rank",  rankRoutes);
+app.use("/api/rank", auth, rankRoutes);
+app.use("/api/analysis", auth, analysisRoutes);
 
 const PORT = process.env.PORT || 5000;
 
