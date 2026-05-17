@@ -78,7 +78,16 @@ export const analyzeUrl = async (req, res)=>{
 
 // Get analysis by ID
 export const getAnalysisById = async (req, res)=>{
-    
+    try {
+        const analysis = await Analysis.findOne({_id: req.params.id, userId: req.userId});
+        if(!analysis){
+            return res.status(404).json({success: false, message: "Analysis not found"});
+        }
+        res.json({success: true, analysis})
+    } catch (error) {
+        console.error("Error fetching analysis by ID:",error.message)
+       return res.status(500).json({success: false, message: "server error"})
+    }
 }
 
 // Get all analysis for a user
