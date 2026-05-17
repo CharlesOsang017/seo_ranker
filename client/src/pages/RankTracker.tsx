@@ -193,7 +193,7 @@ export default function RankTracker() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-medium text-foreground">
-                            <span className="gradient-text">Rank Tracker</span>
+                            <span className="gradient-text">Keyword Rank Tracking</span>
                         </h1>
                         <p className="text-muted-foreground text-sm mt-1">Track your keyword rankings on Google — updated daily.</p>
                     </div>
@@ -351,7 +351,7 @@ export default function RankTracker() {
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-foreground">Track New Keyword</h2>
+                            <h2 className="text-lg mx-auto font-bold text-foreground">Track New Keyword</h2>
                             <button
                                 onClick={() => {
                                     setShowAddModal(false);
